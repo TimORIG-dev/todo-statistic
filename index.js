@@ -18,14 +18,14 @@ function getFiles() {
 }
 
 function processCommand(command) {
-    switch (command) {
+    switch (command.split(' ')[0]) {
         case 'exit':
             process.exit(0);
             break;
-        case command.startsWith('user '):
-            const user = command.split(' ')[1];
+        case 'user':
+            const user = command.split(' ')[1].split(';')[0];
             const todoByUser = getTodoByName(user);
-            for (const i =0; i < todoByUser.length; i++) {
+            for (let i =0; i < todoByUser.length; i++) {
                 console.log(`${i + 1} - ${todoByUser[i]}`);
             }
 
@@ -37,6 +37,29 @@ function processCommand(command) {
         case 'important':
             console.log(importantLines);
             break;
+
+        case 'sort':
+            const sortBy = command.split(' ')[1];
+            if (sortBy === 'importance') {
+                const sortedByImportance = todoLines.sort((a, b) => {
+                    const aImportance = (a.match(/!/g) || []).length;
+                    const bImportance = (b.match(/!/g) || []).length;
+                    return bImportance - aImportance;
+                }
+                );
+                console.log(sortedByImportance);
+            } else if (sortBy === 'user') { 
+                const sortedByUser = todoLines.sort((a, b) => { 
+                    const aUser = a.split(' ')[0].toLowerCase();
+                    const bUser = b.split(' ')[0].toLowerCase();
+                    if (aUser < bUser) return -1;
+                    if (aUser > bUser) return 1;
+                    return 0;
+                }
+                );
+                console.log(sortedByUser);
+            }
+            break;
         default:
             console.log('wrong command');
             break;
@@ -45,7 +68,7 @@ function processCommand(command) {
 
 
 function getTodoByName(name){
-    const commentsByName = todoLines.filter(line => line.split(" ")[0].toLowerCase() === name.toLowerCase());
+    const commentsByName = todoLines.filter(line => line.split(" ")[0].toLowerCase().split(";")[0] === name.toLowerCase());
 
     return commentsByName;
 }
