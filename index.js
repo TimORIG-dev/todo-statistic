@@ -2,6 +2,7 @@ const {getAllFilePathsWithExtension, readFile} = require('./fileSystem');
 const {readLine} = require('./console');
 
 const todoReg = /\/\/ TODO (.*)/;
+const parse = /(?:(.*); )?(?:(\d\d\d\d-\d\d-\d\d);)(.*)/
 
 const files = getFiles();
 let todoLines = []
@@ -28,8 +29,6 @@ function processCommand(command) {
             for (let i =0; i < todoByUser.length; i++) {
                 console.log(`${i + 1} - ${todoByUser[i]}`);
             }
-
-            console.log(`User: ${user}`);
             break;
         case 'show':
             console.log(todoLines);
@@ -49,9 +48,15 @@ function processCommand(command) {
                 );
                 console.log(sortedByImportance);
             } else if (sortBy === 'user') { 
-                const sortedByUser = todoLines.sort((a, b) => { 
-                    const aUser = a.split(' ')[0].toLowerCase();
-                    const bUser = b.split(' ')[0].toLowerCase();
+                const sortedByUser = todoLines.sort((a, b) => {
+                    const aUser = a.split(';')[0].toLowerCase();
+                    const bUser = b.split(';')[0].toLowerCase();
+                    if (a.includes(';') && !b.includes(';')) {
+                        return -1;
+                    }
+                    if (!a.includes(';') && b.includes(';')) {
+                        return 1;
+                    }
                     if (aUser < bUser) return -1;
                     if (aUser > bUser) return 1;
                     return 0;
@@ -68,7 +73,7 @@ function processCommand(command) {
 
 
 function getTodoByName(name){
-    const commentsByName = todoLines.filter(line => line.split(" ")[0].toLowerCase().split(";")[0] === name.toLowerCase());
+    const commentsByName = todoLines.filter(line => line.toLowerCase().startsWith(name.toLowerCase()));
 
     return commentsByName;
 }
