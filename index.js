@@ -22,6 +22,15 @@ function processCommand(command) {
         case 'exit':
             process.exit(0);
             break;
+        case command.startsWith('user '):
+            const user = command.split(' ')[1];
+            const todoByUser = getTodoByName(user);
+            for (const i =0; i < todoByUser.length; i++) {
+                console.log(`${i + 1} - ${todoByUser[i]}`);
+            }
+
+            console.log(`User: ${user}`);
+            break;
         case 'show':
             console.log(todoLines);
             break;
@@ -32,6 +41,18 @@ function processCommand(command) {
             console.log('wrong command');
             break;
     }
+}
+
+
+function getTodoByName(name){
+    const commentsByName = todoLines.filter(line => line[0]==name);
+    return commentsByName;
+}
+
+
+function getTodoByName(name){
+    const commentsByName = todoLines.filter(line => line[0]==name);
+    return commentsByName;
 }
 
 function parseTODO(){
