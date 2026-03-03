@@ -45,15 +45,12 @@ function processCommand(command) {
 
 
 function getTodoByName(name){
-    const commentsByName = todoLines.filter(line => line[0]==name);
+    const commentsByName = todoLines.filter(line => line.split(" ")[0].toLowerCase() === name.toLowerCase());
+
     return commentsByName;
 }
 
 
-function getTodoByName(name){
-    const commentsByName = todoLines.filter(line => line[0]==name);
-    return commentsByName;
-}
 
 function parseTODO(){
     for (const file of files) {
